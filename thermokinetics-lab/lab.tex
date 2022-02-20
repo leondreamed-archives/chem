@@ -1,0 +1,51 @@
+\documentclass[12pt, notitlepage, letterpaper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[version=4]{mhchem}
+\usepackage{siunitx}
+\usepackage[margin=1in]{geometry}
+\usepackage{tabularx}
+\usepackage{ragged2e}
+
+\DeclareSIUnit\ml{\milli\litre}
+\sisetup{space-before-unit = true, free-standing-units = true}
+
+\title{Thermokinetic e Lab}
+\author{Leon Si}
+\date{February 22, 2022}
+
+\begin{document}
+\maketitle
+% Sufficient relevant quantitative and qualitative raw data supports a detailed and valid research question conclusion.
+% Appropriate and sufficient data processing is carried out with the accuracy required to validate conclusion; fully consistent with the experimental data.
+% Full and appropriate consideration of the impact of measurement uncertainty on the analysis.
+% Processed data correctly interpreted so that a completely valid and detailed conclusion to the research question can be deduced.
+
+\def\arraystretch{1.5}
+\begin{tabularx}{\linewidth}{|
+		>{\RaggedRight}X|
+		>{\RaggedRight}X|
+		>{\RaggedRight}X|
+		>{\RaggedRight}X|
+		>{\RaggedRight}X|
+	}
+	\hline
+	Volume of \ce{CuSO4} /\ml
+	 & Baseline temperature /\celsius
+	 & Time of \ce{Zn} addition /\second
+	 & Equation of cooling line
+	 & R value
+	\\\hline
+	20
+	 & 24.8
+	 & 72
+	 & 38.948 - 0.0052021x
+	 & -0.95144
+	\\\hline
+\end{tabularx}
+
+
+% Presentation of the investigation is clear. Errors do not hamper understanding of the focus, process and outcomes.
+% Clear report structure; necessary information on focus, process and outcomes is present and presented coherently.
+% Report is relevant and concise; facilitates a ready understanding of the focus, process and outcomes.
+% Subject specific terminology and conventions is appropriate and correct. Errors do not hamper understanding.
+\end{document}
