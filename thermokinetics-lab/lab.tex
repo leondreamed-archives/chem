@@ -5,11 +5,18 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{tabularx}
 \usepackage{ragged2e}
+\usepackage{caption}
 
 \DeclareSIUnit\ml{\milli\litre}
+\DeclareSIUnit\mpl{\mol\per\litre}
+\DeclareSIUnit\mmol{\milli\mole}
+\DeclareSIUnit\gpl{\gram\per\mol}
+\DeclareSIUnit\kjpmol{\kilo\joule\per\mol}
+\DeclareSIUnit\heatcap{\joule\per\celsius\per\gram}
+
 \sisetup{space-before-unit = true, free-standing-units = true}
 
-\title{Thermokinetic e Lab}
+\title{Thermokinetics Lab}
 \author{Leon Si}
 \date{February 22, 2022}
 
@@ -20,29 +27,166 @@
 % Full and appropriate consideration of the impact of measurement uncertainty on the analysis.
 % Processed data correctly interpreted so that a completely valid and detailed conclusion to the research question can be deduced.
 
-\def\arraystretch{1.5}
-\begin{tabularx}{\linewidth}{|
-		>{\RaggedRight}X|
-		>{\RaggedRight}X|
-		>{\RaggedRight}X|
-		>{\RaggedRight}X|
-		>{\RaggedRight}X|
-	}
-	\hline
-	Volume of \ce{CuSO4} /\ml
-	 & Baseline temperature /\celsius
-	 & Time of \ce{Zn} addition /\second
-	 & Equation of cooling line
-	 & R value
-	\\\hline
-	20
-	 & 24.8
-	 & 72
-	 & 38.948 - 0.0052021x
-	 & -0.95144
-	\\\hline
-\end{tabularx}
+\section*{Data}
 
+\begin{table}[hbt!]
+	\caption{Data collected from 8 trials of the experiment.}
+	\def\arraystretch{1.5}
+	\begin{tabularx}{\linewidth}{|
+			>{\RaggedRight}X|
+			>{\RaggedRight}X|
+			>{\RaggedRight}X|
+			>{\RaggedRight}X|
+			>{\RaggedRight}X|
+			>{\RaggedRight}X|
+		}
+		\hline
+		Trial \#
+		 & Volume of \ce{CuSO4} /\ml
+		 & Baseline temperature /\celsius
+		 & Time of \ce{Zn} addition /\second
+		 & Equation of cooling line
+		 & R value
+		\\\hline
+		% Eric, Bobby, Bryan	20	24.4	72	75.358 - 0.0417x	-0.9918
+		1
+		 & 20
+		 & 24.4
+		 & 72
+		 & 75.358 - 0.0417x
+		 & -0.992
+		\\\hline
+		% Estelle, Hannah, Molly 	20	24.2	132	76.057 - 0.0521x	-0.9591
+		2
+		 & 20
+		 & 24.2
+		 & 132
+		 & 76.057 - 0.0521x
+		 & -0.959
+		\\\hline
+		% Lily, Cindy, Devanshi	20	24.2	60	74.909-0.086299x	-0.99338
+		3
+		 & 20
+		 & 24.2
+		 & 60
+		 & 74.909 - 0.086299x
+		 & -0.993
+		\\\hline
+		% Kevin, Leon, Thomas	20	24.8	72	38.948 - 0.0052021x	-0.95144
+		4
+		 & 20
+		 & 24.8
+		 & 72
+		 & 38.948 - 0.0052021x
+		 & -0.951
+		\\\hline
+		% Avaneesh, Artin, Ethan, Yucen	20	24.6	96	75.883 - 2.5313x	-0.99564
+		5
+		 & 20
+		 & 24.6
+		 & 96
+		 & 75.883 - 2.5313x
+		 & -0.996
+		% Colin, Henry, Collin, Ishan	20	23.1	14	35.707+0.0060035x	0.952365476
+		\\\hline
+		6
+		 & 20
+		 & 23.1
+		 & 14
+		 & 35.707 + 0.0060035x
+		 & 0.952
+		\\\hline
+		% Jasmine, Amy, Tina	20	23.8	15	74.526-0.059536x	-0.8973
+		7
+		 & 20
+		 & 23.8
+		 & 15
+		 & 74.526 - 0.059536x
+		 & -0.897
+		\\\hline
+		% Prachi, Michelle, Naina 	20	24.6	96	61.881 - 0.02918	-0.99694
+		8
+		 & 20
+		 & 24.6
+		 & 96
+		 & 61.881 - 0.02918x
+		 & -0.997
+		\\\hline
+	\end{tabularx}
+\end{table}
+
+\section*{Analysis}
+
+To find the molar enthalpy of formation of \ce{ZnSO4}, the energy change of the reaction $Q_{reaction}$ and the moles of \ce{ZnSO4} ($n_{ZnSO4}$) must be known.
+
+To find the moles of \ce{ZnSO4} produced, the moles of \ce{CuSO4} must be knonwn. Using the known concentration of \ce{CuSO4} (1\mpl), the volume of \ce{CuSO4} can be converted to moles of \ce{CuSO4}:
+\begin{align*}
+	c     & = \frac{n}{V}     \\
+	1\mpl & = \frac{n}{20\ml} \\
+	n     & = 20\mmol
+\end{align*}
+
+Then, to find the moles of \ce{ZnSO4}, the balanced chemical equation of the reaction between zinc metal (\ce{Zn}) and aqueous copper sulfate (\ce{CuSO4}) is used:
+
+\centerline{\ce{CuSO4_{(aq)} + Zn_{(s)} -> ZnSO4_{(aq)} + Cu_{(s)}}}
+
+This equation gives the mole ratio between \ce{CuSO4} and \ce{ZnSO4}, which can be used to find the moles of \ce{ZnSO4} produced in the reaction:
+\begin{align*}
+	n_{\ce{ZnSO4}} & = 20\mmol\,\ce{CuSO4} * \frac{1\mol\,{\ce{ZnSO4}}}{1\mol\,{\ce{CuSO4}}} = 20\mmol\,{\ce{ZnSO4}}
+\end{align*}
+
+In addition to the number of moles of \ce{ZnSO4}, the change in energy of the reaction ($Q_{reaction}$) must also be known. The energy lost by the reaction is equal to the energy gained by the solution: $Q_{reaction} = -Q_{solution}$. To find $Q_{solution}$, the mass $m$ of the solution, the specific heat capacity $c$ of the solution, and the temperature change $\Delta T$ of the solution are all needed.
+
+Since the solution is dilute, the mass of the solution can be approximated using the density of water, 1~\unit{\gram\per\cm}. Thus, the mass of the solution is:
+\begin{align*}
+	m & = \rho * V                       \\
+	m & = 1\,\unit{\gram\per\cm} * 10\ml \\
+	m & = 10\gram
+\end{align*}
+
+The heat capacity of the solution is approximated with the specific heat capacity of water (4.184\heatcap). Thus, $c = 4.184\heatcap$
+
+To calculate the change in temperature of the solution, the initial and final temperatures are needed. The initial temperature of the solution before the reaction ($T_i$) can be found in Table 1 under \textit{Baseline temperature}: 24.8\celsius.
+
+To obtain the final temperature of the solution, the cooling of the solution needs to be taken into account. This is done by plugging in the time when \ce{Zn} was added into the solution into the equation of the cooling line (Table 1):
+\begin{align*}
+	T_f & = 38.948 - 0.0052021x    \\
+	T_f & = 38.948 - 0.0052021(72) \\
+	T_f & = 38.5734488\celsius
+\end{align*}
+
+With these values, the energy change of the solution and the energy change of the reaction can be determined:
+\begin{align*}
+	Q_{solution} & = mc\Delta T = mc(T_f - T_i)
+	\\
+	Q_{solution} & = (10\gram) * (4.184\heatcap) * (38.5734\celsius - 24.8\celsius)
+	\\
+	Q_{solution} & = 576.28\joule
+	\\
+	Q_{reaction} & = -Q_{solution}
+	\\
+	Q_{reaction} & = -576.28\joule
+\end{align*}
+
+Finally, the molar enthalpy of the reaction can be calculated:
+\begin{align*}
+	\Delta H_{reaction} & = \frac{Q_{reaction}}{n}                         \\
+	\Delta H_{reaction} & = \frac{-576.28\joule}{0.02\mol}                 \\
+	\Delta H_{reaction} & = -28814\,\unit{\joule\per\mol} = -28.814\kjpmol
+\end{align*}
+
+\subsection*{Comparison with Theoretical Value}
+To find the theoretical value of this reaction, the following formula is used:
+
+\begin{align*}
+	\Delta H_{reaction} = \sum \Delta {H_f}_{products} - \sum \Delta {H_f}_{reactants}
+\end{align*}
+
+According to NIST, the molar enthalpy formation of \ce{CuSO4} is -769.98\kjpmol and the molar enthalpy of formation of \ce{ZnSO4} is -980.14\kjpmol . Because \ce{Zn} and \ce{Cu} are in their standard states, the molar enthalpy of \ce{Zn} and \ce{Cu} is 0\kjpmol .
+\begin{align*}
+	\Delta H_{reaction} & = -980.14\kjpmol - (-769.98\kjpmol) \\
+	\Delta H_{reaction} & = -210.16\kjpmol
+\end{align*}
 
 % Presentation of the investigation is clear. Errors do not hamper understanding of the focus, process and outcomes.
 % Clear report structure; necessary information on focus, process and outcomes is present and presented coherently.
