@@ -200,7 +200,7 @@ This value represents the point $x$ in the following graph:
 
 \begin{figure}[h!]
 	\caption{A graph of temperature (\unit{\celsius}) against time (\unit{\second}) of the reaction between \ce{CuSO4} and \ce{Zn}. The orange line represents the line of best fit of the cooling line, the red line indicates the time when zinc was added, and the red circle indicates the final temperature of the solution with cooling taken into account.}
-	\centerline{\noindent\includegraphics[width=0.8\textwidth]{time-vs-temperature.png}}
+	\centerline{\noindent\includegraphics[width=0.8\textwidth]{time-vs-temperature-marked.png}}
 \end{figure}
 
 With these values, the energy change of the solution and the energy change of the reaction can be determined:
@@ -300,13 +300,13 @@ The experimental value for $\Delta H_{reaction}$ can be determined by taking the
 \begin{pycode}
 h_reactions = [get_h_reaction(row_index) for row_index in range(0, len(data))]
 avg_h_reaction = sum(h_reactions) / len(data)
-avg_h_reaction_rounded = round(str(avg_h_reaction), sigfigs = 5)
+avg_h_reaction_rounded = round(str(avg_h_reaction), sigfigs = 3)
 \end{pycode}
 % \end{noindent}
 
 \begin{align*}
 	\Delta H_{reaction} & = \frac{-201 + -188 + -191 + -57.6 + -198 + -53.1 + -209 + -144}{8} \\
-	\Delta H_{reaction} & = \py{avg_h_reaction_rounded}\kjpmol
+	\Delta H_{reaction} & = (\py{avg_h_reaction_rounded} \pm 80)\kjpmol
 \end{align*}
 
 \subsection*{Comparison with Theoretical Value}
@@ -350,7 +350,6 @@ The Tietjen-Moore test calculates a test statistic $L_k$ based on the data. The 
 \end{align*}
 
 where $n$ is the number of data points in our data set, $\bar{y}$ denotes the mean for all trials, and $\bar{y}_k$ denotes the sample mean with the largest $k$ points removed. It is suspected that there are 2 outliers in the experimental results displayed in Table 2. Thus, $k = 2$:
-
 % \begin{noindent}
 \begin{pycode}
 import numpy as np
@@ -369,7 +368,6 @@ denominator = sum([
 L_2 = numerator / denominator
 \end{pycode}
 % \end{noindent}
-
 \begin{align*}
 	L_2 & = \frac{\sum_{i=1}^{8-2}(y_i-\bar{y}_2)^2}{\sum_{i=1}^{8}(y_i-\bar{y})^2} \\
 	L_2 & = \py{tsf(L_2)}
@@ -380,7 +378,7 @@ Because this test statistic is close to zero, it strongly suggests that there ar
 % \begin{noindent}
 \begin{pycode}
 avg_h_reaction_2 = np.mean(filtered_h_reactions)
-avg_h_reaction_2_rounded = round(str(avg_h_reaction_2), sigfigs = 5)
+avg_h_reaction_2_rounded = round(str(avg_h_reaction_2), sigfigs = 3)
 percent_error_2 = abs(
 	(avg_h_reaction_2 - expected_h_reaction) / expected_h_reaction
 )
@@ -389,7 +387,7 @@ percent_error_2 = abs(
 
 \begin{align*}
 	\Delta {H_{reaction}}_{2} & = \frac{-201 + -188 + -191 + -198 + -209 + -144}{6}                   \\
-	\Delta {H_{reaction}}_{2} & = \py{avg_h_reaction_2_rounded}\kjpmol                                \\
+	\Delta {H_{reaction}}_{2} & = (\py{avg_h_reaction_2_rounded} \pm 30)\kjpmol                                \\
 	\delta                    & = |\frac{\py{avg_h_reaction_2_rounded} - (-210.16)}{-210.16}| * 100\% \\
 	\delta                    & = \py{round(percent_error_2 * 100, sigfigs = 3)}\%
 \end{align*}
@@ -400,6 +398,6 @@ The experimental value of the molar enthalpy of reaction between \ce{CuSO4} and 
 
 This discrepancy can be explained by the assumptions made in our calculations. We assumed that all the heat from the reaction is being transferred to the solution through our equation $Q_{reaction} = -Q_{solution}$. However, during this experiment, some of this heat was also transferred to the container: the styrofoam cup, and our calculations did not take into account the heat capacity of the container. As a result, the energy gained by the solution is less than the energy released by the reaction, leading to a molar enthalpy calculation that is lower than the theoretical molar enthalpy.
 
-Another potential source of error is the .
+Another potential source of error is the extrapolation of the solution's final temperature based on the cooling line. The reaction
 
 \end{document}
