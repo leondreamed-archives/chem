@@ -278,7 +278,8 @@ Thus, the experimental value for $\Delta H_{reaction}$ can be determined by taki
 
 % \begin{noindent}
 \begin{pycode}
-avg_h_reaction = sum([get_h_reaction(row_index) for row_index in range(0, len(data))]) / len(data)
+h_reactions = [get_h_reaction(row_index) for row_index in range(0, len(data))]
+avg_h_reaction = sum(h_reactions) / len(data)
 avg_h_reaction_rounded = round(str(avg_h_reaction), sigfigs = 5)
 \end{pycode}
 % \end{noindent}
@@ -316,12 +317,62 @@ percent_error = abs((avg_h_reaction - expected_h_reaction) / expected_h_reaction
 % \end{noindent}
 
 \begin{align*}
-	\delta & = |\frac{v_A - v_E}{v_E}| * 100\%                                  \\
+	\delta & = |\frac{v_A - v_E}{v_E}| * 100\%                                   \\
 	\delta & = |\frac{\py{avg_h_reaction_rounded} - (-210.16)}{-210.16}| * 100\% \\
 	\delta & = \py{round(percent_error * 100, sigfigs = 3)}\%
 \end{align*}
 
-However, from the experimental data, there are potentially two outliers: Trial 3 and Trial 5. To confirm
+However, from the experimental data, there are potentially two outliers: Trial 3 and Trial 5. Because there is potentially more than one outlier, the Dixon Q test cannot be used since it is only valid for data that has exactly one outlier. Instead, to determine these outliers in our data, the Tietjen-Moore test is used instead.
+
+The Tietjen-Moore test calculates a test statistic $L_k$ based on the data. The value of the test statistic is between zero and one: if there are no outliers in the data, the test statistic is close to 1, and if there are outliers in the data, it will be closer to 0. For a data set with exactly $k$ outliers, the formula for calculating the test statistic $L_k$ for a Tietjen-Moore test is:
+\begin{align*}
+	L_k = \frac{\sum_{i=1}^{n-k}(y_i-\bar{y}_k)^2}{\sum_{i=1}^{n}(y_i-\bar{y})^2}
+\end{align*}
+
+where $n$ is the number of data points in our data set, $\bar{y}$ denotes the mean for all trials, and $\bar{y}_k$ denotes the sample mean with the largest $k$ points removed. It is suspected that there are 2 outliers in the experimental results displayed in Table 2. Thus, $k = 2$:
+
+% \begin{noindent}
+\begin{pycode}
+import numpy as np
+# Retrieving the data with the two largest values removed
+filtered_h_reactions = sorted(h_reactions)[:-2]
+full_mean = np.mean(h_reactions)
+filtered_mean = np.mean(filtered_h_reactions)
+
+numerator = sum([
+	(y - filtered_mean) ** 2 for y in filtered_h_reactions
+])
+denominator = sum([
+	(y - full_mean) ** 2 for y in h_reactions
+])
+
+L_2 = numerator / denominator
+\end{pycode}
+% \end{noindent}
+
+\begin{align*}
+	L_2 & = \frac{\sum_{i=1}^{8-2}(y_i-\bar{y}_2)^2}{\sum_{i=1}^{8}(y_i-\bar{y})^2} \\
+	L_2 & = \py{tsf(L_2)}
+\end{align*}
+
+Because this test statistic is close to zero, it strongly suggests that there are two outliers in the data. Removing these outliers (Trial 3 and Trial 5) from our data and recalculating the $\Delta H_{reaction}$ gives a much smaller percent error:
+
+% \begin{noindent}
+\begin{pycode}
+avg_h_reaction_2 = np.mean(filtered_h_reactions)
+avg_h_reaction_2_rounded = round(str(avg_h_reaction_2), sigfigs = 5)
+percent_error_2 = abs(
+	(avg_h_reaction_2 - expected_h_reaction) / expected_h_reaction
+)
+\end{pycode}
+% \end{noindent}
+
+\begin{align*}
+	\Delta {H_{reaction}}_{2} & = \frac{-201 + -188 + -191 + -198 + -209 + -144}{6}                   \\
+	\Delta {H_{reaction}}_{2} & = \py{avg_h_reaction_2_rounded}\kjpmol                                \\
+	\delta                    & = |\frac{\py{avg_h_reaction_2_rounded} - (-210.16)}{-210.16}| * 100\% \\
+	\delta                    & = \py{round(percent_error_2 * 100, sigfigs = 3)}\%
+\end{align*}
 
 \section*{Conclusion}
 
