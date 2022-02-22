@@ -44,7 +44,7 @@
 [5]: R value of cooling line
 """
 
-data = [
+raw_data = [
 	# Eric, Bobby, Bryan	20	24.4	72	75.358 - 0.0417x	-0.9918
 	[20, 24.4, 72, 75.358, -0.0417, -0.9918],
 	# Estelle, Hannah, Molly 	20	24.2	132	76.057 - 0.0521x	-0.9591
@@ -63,22 +63,27 @@ data = [
 	[20, 24.6, 96, 61.881, -0.02918, -0.99694],
 ]
 
+headers = 'volume', 'initial_temp', 'zinc_addition_time', 'cooling_line_b', 'cooling_line_m', 'r_value'
+data = [
+	dict(zip(headers, row)) for row in raw_data
+]
+
 def get_data_row(row_index: int):
 	# Three sig fig
 	def tsf(num):
 		return '%s' % float('%.3g' % num)
 
 	row = data[row_index]
-	sign = "+" if row[4] > 0 else "-"
-	equation = f"{row[3]:.3g} {sign} {abs(row[4]):.3g}$x$"
+	sign = "+" if row['cooling_line_b'] > 0 else "-"
+	equation = f"{row['cooling_line_m']:.3g} {sign} {abs(row['cooling_line_b']):.3g}$x$"
 
 	return f"""
 		{row_index}
-		& {row[0]}
-		& {row[1]}
-		& {row[2]}
+		& {row['volume']}
+		& {row['initial_temp']}
+		& {row['zinc_addition_time']}
 		& {equation}
-		& {tsf(row[5])}
+		& {row['r_value']}
 	"""
 \end{pycode}
 % \end{noindent}
@@ -167,7 +172,6 @@ This value represents the point $x$ in the following graph:
 
 \centerline{\noindent\includegraphics{time-vs-temperature.png}}
 
-
 With these values, the energy change of the solution and the energy change of the reaction can be determined:
 \begin{align*}
 	Q_{solution} & = mc\Delta T = mc(T_f - T_i)
@@ -191,74 +195,37 @@ Finally, the molar enthalpy of the reaction can be calculated:
 Performing the above calculation for all trials gives the following table of values:
 
 % \begin{noindent}
-\begin{luacode*}
-	--[[
-			[1] = Volume of CuSO4 Time of Zn Addition
-			[2] = Initial temp
-			[3] = Time of Zn addition
-			[4] = b value for equation of cooling line
-			[5] = m value for equation of cooling line (could be positive/negative)
-		]]
-	data = {
-		-- Eric, Bobby, Bryan	20	24.4	72	75.358 - 0.0417x	-0.9918
-		{20, 24.4, 72, 75.358, -0.0417},
-		-- Estelle, Hannah, Molly 	20	24.2	132	76.057 - 0.0521x	-0.9591
-		{20, 24.2, 132, 76.1, -0.0521},
-		-- Lily, Cindy, Devanshi	20	24.2	60	74.909-0.086299x	-0.99338
-		{20, 24.2, 60, 74.9, -0.086299},
-		-- Kevin, Leon, Thomas	20	24.8	72	38.948 - 0.0052021x	-0.95144
-		{20, 24.8, 72, 38.948, -0.0052021},
-		-- Avaneesh, Artin, Ethan, Yucen	20	24.6	96	75.883 - 2.5313x	-0.99564
-		{20, 24.6, 96, 75.883, -2.5313},
-		-- Colin, Henry, Collin, Ishan	20	23.1	14	35.707+0.0060035x	0.952365476
-		{20, 23.1, 14, 35.707, 0.0060035},
-		-- Jasmine, Amy, Tina	20	23.8	15	74.526-0.059536x	-0.8973
-		{20, 23.8, 15, 74.526, -0.059536},
-		-- Prachi, Michelle, Naina 	20	24.6	96	61.881 - 0.02918	-0.99694
-		{20, 24.6, 96, 61.881, -0.02918},
-	}
+\begin{pycode}
+def get_final_temp(row_index: int):
+	row = data[row_index]
+	t_final = row['cooling_line_b'] - row['zinc_addition_time'] * row['cooling_line_m']
+	return t_final
 
-	function qreaction(t_initial, t_final)
-	m = 20
+def get_q_reaction(row_index: int):
+	row = data[row_index]
+	m = row['volume']
 	c = 4.184
+	t_initial = row['initial_temp']
+	t_final = get_final_temp(row_index)
+	q = -1 * m * c * (t_final - t_initial)
+	return q
 
-	q = m * c * (t_final - t_initial)
-
-	tex.sprint(("%.4g"):format(-q))
-	end
-
-	function hreaction(t_initial, t_final)
-	m = 20
-	c = 4.184
-
-	q = m * c * (t_final - t_initial)
-
+def get_h_reaction(row_index: int):
+	q = get_q_reaction(row_index)
 	mols = 0.02
-	h = -q / mols / 1000 -- *k*J/mol
+	h = q / mols / 100 # kJ/mol
+	return h
 
-	-- Three significant figures
-	tex.sprint(("%.3g"):format(h))
-	end
-\end{luacode*}
+def get_table_2_row(row_index: int):
+	row = row[row_index]
+	return f"""
+		{row_index}
+		& {get_final_temp(row_index)}
+		& {get_q_reaction(row_index)}
+		& {get_h_reaction(row_index)}
+	"""
+\end{pycode}
 % \end{noindent}
-
-\newcounter{hreactionrownumber}
-\setcounter{hreactionrownumber}{0}
-\newcommand{\hreactionrow}[5]{%
-	% #1: Baseline temperature
-	% #2: Time of Zn addition
-	% #3: b parameter of equation of cooling line
-	% #4: sign of m
-	% #5: m parameter of equation of cooling line
-	\addtocounter{hreactionrownumber}{1}
-	\thehreactionrownumber
-	&
-	\luaexec{tex.sprint(("\%.3g"):format(#3 #4 #5 * #2))}
-	&
-	\directlua{qreaction(#1, #3 #4 #5 * #2)}
-	&
-	\directlua{hreaction(#1, #3 #4 #5 * #2)}
-}
 
 \begin{table}[hbt!]
 	\caption{Calculations of $\Delta H_{reaction}$ for all trials.}
