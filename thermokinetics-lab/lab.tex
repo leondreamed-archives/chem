@@ -8,6 +8,7 @@
 \usepackage{calculator}
 \usepackage{luacode}
 \usepackage{pythontex}
+\usepackage{float}
 
 \DeclareSIUnit\ml{\milli\litre}
 \DeclareSIUnit\mpl{\mol\per\litre}
@@ -26,13 +27,20 @@
 \maketitle
 
 % Rubric:
+
 % Sufficient relevant quantitative and qualitative raw data supports a detailed and valid research question conclusion.
 % Appropriate and sufficient data processing is carried out with the accuracy required to validate conclusion; fully consistent with the experimental data.
 % Full and appropriate consideration of the impact of measurement uncertainty on the analysis.
 % Processed data correctly interpreted so that a completely valid and detailed conclusion to the research question can be deduced.
 
+% Presentation of the investigation is clear. Errors do not hamper understanding of the focus, process and outcomes.
+% Clear report structure; necessary information on focus, process and outcomes is present and presented coherently.
+% Report is relevant and concise; facilitates a ready understanding of the focus, process and outcomes.
+% Subject specific terminology and conventions is appropriate and correct. Errors do not hamper understanding.
+
 \section*{Data}
 
+% Declare rounding function to three significant figures
 % \begin{noindent}
 \begin{pycode}
 from sigfig import round
@@ -42,6 +50,7 @@ def tsf(num):
 \end{pycode}
 % \end{noindent}
 
+% Declare data
 % \begin{noindent}
 \begin{pycode}
 """
@@ -65,7 +74,7 @@ raw_data = [
 	# Avaneesh, Artin, Ethan, Yucen	20	24.6	96	75.883 - 2.5313x	-0.99564
 	[20, 24.6, 96, 75.883, -2.5313 / 60, -0.99564], # time of cooling line was given in minutes
 	# Colin, Henry, Collin, Ishan	20	23.1	14	35.707+0.0060035x	0.952365476
-	[20, 23.1, 14, 35.707, 0.0060035, 0.952365476],
+	[20, 23.1, 14, 35.707, +0.0060035, 0.952365476],
 	# Jasmine, Amy, Tina	20	23.8	15	74.526-0.059536x	-0.8973
 	[20, 23.8, 15, 74.526, -0.059536, -0.8973],
 	# Prachi, Michelle, Naina 	20	24.6	96	61.881 - 0.02918	-0.99694
@@ -88,7 +97,7 @@ data = [
 def get_data_row(row_index: int):
 	row = data[row_index]
 	sign = "+" if row['cooling_line_m'] > 0 else "-"
-	equation = f"{tsf(row['cooling_line_m'])} {sign} {tsf(abs(row['cooling_line_b']))}$x$"
+	equation = f"{tsf(row['cooling_line_b'])} {sign} {tsf(abs(row['cooling_line_m']))}$x$"
 
 	return f"""
 		{row_index + 1}
@@ -102,7 +111,7 @@ def get_data_row(row_index: int):
 % \end{noindent}
 
 \begin{table}[hbt!]
-	\caption{Data collected from 8 trials of the experiment. Equation of cooling line approximates the temperature of the solution in Celsius at $x$ seconds. The parameters are rounded to 3 significant figures.}
+	\caption{Data collected from 8 trials of measuring the heat released from the reaction between \ce{CuSO4} and \ce{Zn}. The equation of the cooling line approximates the temperature of the solution in degrees Celsius at $x$ seconds, and the parameters are rounded to 3 significant figures.}
 	\def\arraystretch{1.5}
 	\begin{tabularx}{\linewidth}{|
 			>{\RaggedRight}X|
@@ -143,7 +152,9 @@ def get_data_row(row_index: int):
 
 The data in Table 1 can be used to find the molar enthalpy of formation of \ce{ZnSO4}. For the following calculations, the values in Trial 4 are used.
 
-To find the molar enthalpy of formation of \ce{ZnSO4}, the energy change of the reaction $Q_{reaction}$ and the moles of \ce{ZnSO4} ($n_{ZnSO4}$) must be known.
+To find the molar enthalpy of formation of \ce{ZnSO4}, the moles of \ce{ZnSO4} ($n_{ZnSO4}$) and the energy change of the reaction $Q_{reaction}$ must be known.
+
+\subsection*{Moles of \ce{ZnSO4}}
 
 To find the moles of \ce{ZnSO4} produced, the moles of \ce{CuSO4} must be knonwn. Using the known concentration of \ce{CuSO4} (1\mpl), the volume of \ce{CuSO4} can be converted to moles of \ce{CuSO4}:
 \begin{align*}
@@ -161,7 +172,9 @@ This equation gives the mole ratio between \ce{CuSO4} and \ce{ZnSO4}, which can 
 	n_{\ce{ZnSO4}} & = 20\mmol~\ce{CuSO4} * \frac{1\mol~{\ce{ZnSO4}}}{1\mol~{\ce{CuSO4}}} = 20\mmol~{\ce{ZnSO4}}
 \end{align*}
 
-In addition to the number of moles of \ce{ZnSO4}, the change in energy of the reaction ($Q_{reaction}$) must also be known. The energy lost by the reaction is equal to the energy gained by the solution: $Q_{reaction} = -Q_{solution}$. To find $Q_{solution}$, the mass $m$ of the solution, the specific heat capacity $c$ of the solution, and the temperature change $\Delta T$ of the solution are all needed.
+\subsection*{Change in energy of the reaction ($Q_{reaction}$)}
+
+To calculate the molar enthalpy of reaction between \ce{CuSO4} and \ce{Zn}, the change in energy of the reaction ($Q_{reaction}$) must also be known. The energy lost by the reaction is equal to the energy gained by the solution: $Q_{reaction} = -Q_{solution}$. To find $Q_{solution}$, the mass $m$ of the solution, the specific heat capacity $c$ of the solution, and the temperature change $\Delta T$ of the solution are all needed.
 
 Since the solution is dilute, the mass of the solution can be approximated using the density of water, 1~\unit{\gram\per\cm}. Thus, the mass of the solution is:
 \begin{align*}
@@ -198,14 +211,16 @@ With these values, the energy change of the solution and the energy change of th
 	Q_{reaction} & = -1152.56\joule
 \end{align*}
 
-Finally, the molar enthalpy of the reaction can be calculated:
+\subsection*{Molar enthalpy of reaction ($\Delta H_{reaction}$)}
+
+Using the moles of \ce{ZnSO4} and the change in energy of the reaction ($Q_{reaction}$), the molar enthalpy of the reaction can be calculated:
 \begin{align*}
 	\Delta H_{reaction} & = \frac{Q_{reaction}}{n}                        \\
 	\Delta H_{reaction} & = \frac{-1152.56\joule}{0.02\mol}               \\
 	\Delta H_{reaction} & = -57628~\unit{\joule\per\mol} = -57.628\kjpmol
 \end{align*}
 
-Performing the above calculation for all trials gives the following table of values:
+Performing the above calculation for all trials in Table 1 yields the following table of values:
 
 % \begin{noindent}
 \begin{pycode}
@@ -240,7 +255,7 @@ def get_table_2_row(row_index: int):
 \end{pycode}
 % \end{noindent}
 
-\begin{table}[hbt!]
+\begin{table}[H]
 	\caption{Calculations of $\Delta H_{reaction}$ for all trials.}
 	\def\arraystretch{1.5}
 	\begin{tabularx}{\linewidth}{|
@@ -252,7 +267,7 @@ def get_table_2_row(row_index: int):
 		\hline
 		Trial \#
 		 & Final Temperature $T_f$ /\unit{\celsius}
-		 & $Q_{reaction}$ /\unit{\joule\per\mol}
+		 & $Q_{reaction}$ /\unit{\joule}
 		 & $\Delta H_{reaction}$ /\unit{\kjpmol}
 		\\\hline
 		\py{get_table_2_row(0)}
@@ -274,7 +289,7 @@ def get_table_2_row(row_index: int):
 	\end{tabularx}
 \end{table}
 
-Thus, the experimental value for $\Delta H_{reaction}$ can be determined by taking the average of the values from all 8 trials. The uncertainty can be calculated using the half-range method:
+The experimental value for $\Delta H_{reaction}$ can be determined by taking the average of the values from all 8 trials. The uncertainty can be calculated using the half-range method:
 
 % \begin{noindent}
 \begin{pycode}
@@ -322,9 +337,9 @@ percent_error = abs((avg_h_reaction - expected_h_reaction) / expected_h_reaction
 	\delta & = \py{round(percent_error * 100, sigfigs = 3)}\%
 \end{align*}
 
-However, from the experimental data, there are potentially two outliers: Trial 3 and Trial 5. Because there is potentially more than one outlier, the Dixon Q test cannot be used since it is only valid for data that has exactly one outlier. Instead, to determine these outliers in our data, the Tietjen-Moore test is used instead.
+However, from the experimental data, there are potentially two outliers: Trial 3 and Trial 5. Because there is potentially more than one outlier, the Dixon Q test cannot be used since it is only valid for data that has exactly one outlier. To determine these outliers in our data, the Tietjen-Moore test is used instead.
 
-The Tietjen-Moore test calculates a test statistic $L_k$ based on the data. The value of the test statistic is between zero and one: if there are no outliers in the data, the test statistic is close to 1, and if there are outliers in the data, it will be closer to 0. For a data set with exactly $k$ outliers, the formula for calculating the test statistic $L_k$ for a Tietjen-Moore test is:
+The Tietjen-Moore test calculates a test statistic $L_k$ based on the data. The value of the test statistic is between zero and one: if there are no outliers in the data, the test statistic is very close to 1, and if there are outliers in the data, it will be closer to 0. For a data set with exactly $k$ outliers, the formula for calculating the test statistic $L_k$ for a Tietjen-Moore test is:
 \begin{align*}
 	L_k = \frac{\sum_{i=1}^{n-k}(y_i-\bar{y}_k)^2}{\sum_{i=1}^{n}(y_i-\bar{y})^2}
 \end{align*}
@@ -376,8 +391,10 @@ percent_error_2 = abs(
 
 \section*{Conclusion}
 
-% Presentation of the investigation is clear. Errors do not hamper understanding of the focus, process and outcomes.
-% Clear report structure; necessary information on focus, process and outcomes is present and presented coherently.
-% Report is relevant and concise; facilitates a ready understanding of the focus, process and outcomes.
-% Subject specific terminology and conventions is appropriate and correct. Errors do not hamper understanding.
+The experimental value of the molar enthalpy of reaction between \ce{CuSO4} and \ce{Zn} was calculated to be -188.31\kjpmol . Because this number is positive, it indicates that the reaction is exothemic and releases energy as heat. Compared to the theoretical value of -210.16\kjpmol , the experimental value is greater, indicating that the reaction did not release as much energy as expected.
+
+This discrepancy can be explained by the assumptions made in our calculations. We assumed that all the heat from the reaction is being transferred to the solution through our equation $Q_{reaction} = -Q_{solution}$. However, during this experiment, some of this heat was also transferred to the container: the styrofoam cup, and our calculations did not take into account the heat capacity of the container. As a result, the energy gained by the solution is less than the energy released by the reaction, leading to a molar enthalpy calculation that is lower than the theoretical molar enthalpy.
+
+Another potential source of error is the . 
+
 \end{document}
