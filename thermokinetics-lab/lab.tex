@@ -35,6 +35,15 @@
 
 % \begin{noindent}
 \begin{pycode}
+from sigfig import round
+# Three sig fig
+def tsf(num):
+	return round(str(num), sigfigs = 3)
+\end{pycode}
+% \end{noindent}
+
+% \begin{noindent}
+\begin{pycode}
 """
 [0]: Volume of CuSO4 Time of Zn Addition
 [1]: Initial temp
@@ -63,27 +72,31 @@ raw_data = [
 	[20, 24.6, 96, 61.881, -0.02918, -0.99694],
 ]
 
-headers = 'volume', 'initial_temp', 'zinc_addition_time', 'cooling_line_b', 'cooling_line_m', 'r_value'
+headers = (
+	'volume',
+	'initial_temp',
+	'zinc_addition_time',
+	'cooling_line_b',
+	'cooling_line_m',
+	'r_value'
+)
+
 data = [
 	dict(zip(headers, row)) for row in raw_data
 ]
 
 def get_data_row(row_index: int):
-	# Three sig fig
-	def tsf(num):
-		return '%s' % float('%.3g' % num)
-
 	row = data[row_index]
-	sign = "+" if row['cooling_line_b'] > 0 else "-"
-	equation = f"{row['cooling_line_m']:.3g} {sign} {abs(row['cooling_line_b']):.3g}$x$"
+	sign = "+" if row['cooling_line_m'] > 0 else "-"
+	equation = f"{tsf(row['cooling_line_m'])} {sign} {tsf(abs(row['cooling_line_b']))}$x$"
 
 	return f"""
-		{row_index}
+		{row_index + 1}
 		& {row['volume']}
 		& {row['initial_temp']}
 		& {row['zinc_addition_time']}
 		& {equation}
-		& {row['r_value']}
+		& {tsf(row['r_value'])}
 	"""
 \end{pycode}
 % \end{noindent}
@@ -198,7 +211,7 @@ Performing the above calculation for all trials gives the following table of val
 \begin{pycode}
 def get_final_temp(row_index: int):
 	row = data[row_index]
-	t_final = row['cooling_line_b'] - row['zinc_addition_time'] * row['cooling_line_m']
+	t_final = row['cooling_line_b'] + row['zinc_addition_time'] * row['cooling_line_m']
 	return t_final
 
 def get_q_reaction(row_index: int):
@@ -213,16 +226,16 @@ def get_q_reaction(row_index: int):
 def get_h_reaction(row_index: int):
 	q = get_q_reaction(row_index)
 	mols = 0.02
-	h = q / mols / 100 # kJ/mol
+	h = q / mols / 1000 # kJ/mol
 	return h
 
 def get_table_2_row(row_index: int):
-	row = row[row_index]
+	row = data[row_index]
 	return f"""
-		{row_index}
-		& {get_final_temp(row_index)}
-		& {get_q_reaction(row_index)}
-		& {get_h_reaction(row_index)}
+		{row_index + 1}
+		& {tsf(get_final_temp(row_index))}
+		& {tsf(get_q_reaction(row_index))}
+		& {tsf(get_h_reaction(row_index))}
 	"""
 \end{pycode}
 % \end{noindent}
@@ -242,38 +255,37 @@ def get_table_2_row(row_index: int):
 		 & $Q_{reaction}$ /\unit{\joule\per\mol}
 		 & $\Delta H_{reaction}$ /\unit{\kjpmol}
 		\\\hline
-		% Eric, Bobby, Bryan	20	24.4	72	75.358 - 0.0417x	-0.9918
-		\hreactionrow{24.4}{72}{75.358}{-}{0.0417}
+		\py{get_table_2_row(0)}
 		\\\hline
-		% Estelle, Hannah, Molly 	20	24.2	132	76.057 - 0.0521x	-0.9591
-		\hreactionrow{24.2}{132}{76.057}{-}{0.0521}
+		\py{get_table_2_row(1)}
 		\\\hline
-		% Lily, Cindy, Devanshi	20	24.2	60	74.909-0.086299x	-0.99338
-		\hreactionrow{24.2}{60}{74.909}{-}{0.086299}
+		\py{get_table_2_row(2)}
 		\\\hline
-		% Kevin, Leon, Thomas	20	24.8	72	38.948 - 0.0052021x	-0.95144
-		\hreactionrow{24.8}{72}{38.948}{-}{0.0052021}
+		\py{get_table_2_row(3)}
 		\\\hline
-		% Avaneesh, Artin, Ethan, Yucen	20	24.6	96	75.883 - 2.5313x	-0.99564
-		\hreactionrow{24.6}{96}{75.883}{-}{0.0422}
+		\py{get_table_2_row(4)}
 		\\\hline
-		% Colin, Henry, Collin, Ishan	20	23.1	14	35.707+0.0060035x	0.952365476
-		\hreactionrow{23.1}{14}{35.707}{-}{0.0060035}
+		\py{get_table_2_row(5)}
 		\\\hline
-		% Jasmine, Amy, Tina	20	23.8	15	74.526-0.059536x	-0.8973
-		\hreactionrow{23.8}{15}{74.526}{-}{0.059536}
+		\py{get_table_2_row(6)}
 		\\\hline
-		% Prachi, Michelle, Naina 	20	24.6	96	61.881 - 0.02918	-0.99694
-		\hreactionrow{24.6}{96}{61.881}{-}{0.02918}
+		\py{get_table_2_row(7)}
 		\\\hline
 	\end{tabularx}
 \end{table}
 
 Thus, the experimental value for $\Delta H_{reaction}$ can be determined by taking the average of the values from all 8 trials. The uncertainty can be calculated using the half-range method:
 
+% \begin{noindent}
+\begin{pycode}
+avg_h_reaction = sum([get_h_reaction(row_index) for row_index in range(0, len(data))]) / len(data)
+avg_h_reaction_rounded = round(str(avg_h_reaction), sigfigs = 5)
+\end{pycode}
+% \end{noindent}
+
 \begin{align*}
-	\Delta H_{reaction} & = \frac{-201 + -188 + -191 + -57.6 + -198 + -52.4 + -209 + -144}{8}
-	\Delta H_{reaction} & =
+	\Delta H_{reaction} & = \frac{-201 + -188 + -191 + -57.6 + -198 + -53.1 + -209 + -144}{8} \\
+	\Delta H_{reaction} & = \py{avg_h_reaction_rounded}\kjpmol
 \end{align*}
 
 \subsection*{Comparison with Theoretical Value}
@@ -283,79 +295,38 @@ To find the theoretical value of this reaction, the following formula is used:
 	\Delta H_{reaction} = \sum \Delta {H_f}_{products} - \sum \Delta {H_f}_{reactants}
 \end{align*}
 
+% \begin{noindent}
+\begin{pycode}
+expected_h_reaction = -980.14 - (-769.98)
+\end{pycode}
+% \end{noindent}
+
 According to NIST, the molar enthalpy formation of \ce{CuSO4} is -769.98\kjpmol and the molar enthalpy of formation of \ce{ZnSO4} is -980.14\kjpmol . Because \ce{Zn} and \ce{Cu} are in their standard states, the molar enthalpy of \ce{Zn} and \ce{Cu} is 0\kjpmol .
 \begin{align*}
 	\Delta H_{reaction} & = -980.14\kjpmol - (-769.98\kjpmol) \\
 	\Delta H_{reaction} & = -210.16\kjpmol
 \end{align*}
 
+This theoretical value can be used to determine the percent error of the value obtained from the experimental trials:
+
+% \begin{noindent}
+\begin{pycode}
+percent_error = abs((avg_h_reaction - expected_h_reaction) / expected_h_reaction)
+\end{pycode}
+% \end{noindent}
+
+\begin{align*}
+	\delta & = |\frac{v_A - v_E}{v_E}| * 100\%                                  \\
+	\delta & = |\frac{\py{avg_h_reaction_rounded} - (-210.16)}{-210.16}| * 100\% \\
+	\delta & = \py{round(percent_error * 100, sigfigs = 3)}\%
+\end{align*}
+
+However, from the experimental data, there are potentially two outliers: Trial 3 and Trial 5. To confirm
+
+\section*{Conclusion}
+
 % Presentation of the investigation is clear. Errors do not hamper understanding of the focus, process and outcomes.
 % Clear report structure; necessary information on focus, process and outcomes is present and presented coherently.
 % Report is relevant and concise; facilitates a ready understanding of the focus, process and outcomes.
 % Subject specific terminology and conventions is appropriate and correct. Errors do not hamper understanding.
 \end{document}
-
-% Performing the above calculation for the values in each trial yields the following table of values:
-
-% \newcommand{\finaltemprow}[3]{%
-% 	% #1: Time of Zn addition
-% 	% #2: b value in cooling line equation
-% 	% #3: m value in cooling line equation
-% 	\addtocounter{temprownumber}{1}
-% 	\thetemprownumber
-% 	& #1
-% 	& #2 - #3$x$
-% 	& \luaexec{tex.sprint(("\%.3g"):format(#2-#3*#1))}
-% }
-% \newcommand{\finaltemprowpos}[3]{%
-% 	% #1: Time of Zn addition
-% 	% #2: b value in cooling line equation
-% 	% #3: m value in cooling line equation
-% 	\addtocounter{temprownumber}{1}
-% 	\thetemprownumber
-% 	& #1
-% 	& #2 + #3$x$
-% 	& \luaexec{tex.sprint(("\%.3g"):format(#2+#3*#1))}
-% }
-
-% \begin{table}[hbt!]
-% 	\caption{Final temperature of the solution calculated for each trial.}
-% 	\def\arraystretch{1.5}
-% 	\begin{tabularx}{\linewidth}{|
-% 			>{\RaggedRight}X|
-% 			>{\RaggedRight}X|
-% 			>{\RaggedRight}X|
-% 			>{\RaggedRight}X|
-% 		}
-% 		\hline
-% 		Trial \#
-% 		 & Time of Zn addition /\unit{\second}
-% 		 & Equation of cooling line
-% 		 & Final temperature /\unit{\celsius}
-% 		\\\hline
-% 		% Eric, Bobby, Bryan	20	24.4	72	75.358 - 0.0417x	-0.9918
-% 		\finaltemprow{72}{75.4}{0.0417}
-% 		\\\hline
-% 		% Estelle, Hannah, Molly 	20	24.2	132	76.057 - 0.0521x	-0.9591
-% 		\finaltemprow{132}{76.1}{0.0521}
-% 		\\\hline
-% 		% Lily, Cindy, Devanshi	20	24.2	60	74.909-0.086299x	-0.99338
-% 		\finaltemprow{60}{74.9}{0.0863}
-% 		\\\hline
-% 		% Kevin, Leon, Thomas	20	24.8	72	38.948 - 0.0052021x	-0.95144
-% 		\finaltemprow{72}{38.9}{0.00520}
-% 		\\\hline
-% 		% Avaneesh, Artin, Ethan, Yucen	20	24.6	96	75.883 - 2.5313x	-0.99564
-% 		\finaltemprow{96}{75.9}{0.0422}
-% 		\\\hline
-% 		% Colin, Henry, Collin, Ishan	20	23.1	14	35.707+0.0060035x	0.952365476
-% 		\finaltemprowpos{14}{35.7}{0.00600}
-% 		\\\hline
-% 		% Jasmine, Amy, Tina	20	23.8	15	74.526-0.059536x	-0.8973
-% 		\finaltemprow{15}{74.5}{0.0595}
-% 		\\\hline
-% 		% Prachi, Michelle, Naina 	20	24.6	96	61.881 - 0.02918	-0.99694
-% 		\finaltemprow{96}{61.9}{0.0292}
-% 		\\\hline
-% 	\end{tabularx}
-% \end{table}
