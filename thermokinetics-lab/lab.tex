@@ -219,6 +219,7 @@ With these values, the energy change of the solution and the energy change of th
 \subsection*{Molar enthalpy of reaction ($\Delta H_{reaction}$)}
 
 Using the moles of \ce{ZnSO4} and the change in energy of the reaction ($Q_{reaction}$), the molar enthalpy of the reaction can be calculated:
+%
 \begin{align*}
 	\Delta H_{reaction} & = \frac{Q_{reaction}}{n}                        \\
 	\Delta H_{reaction} & = \frac{-1152.56\joule}{0.02\mol}               \\
@@ -295,7 +296,7 @@ def get_table_2_row(row_index: int):
 \end{table}
 
 The experimental value for $\Delta H_{reaction}$ can be determined by taking the average of the values from all 8 trials. The uncertainty can be calculated using the half-range method:
-
+\vspace{5pt}
 % \begin{noindent}
 \begin{pycode}
 h_reactions = [get_h_reaction(row_index) for row_index in range(0, len(data))]
@@ -303,7 +304,7 @@ avg_h_reaction = sum(h_reactions) / len(data)
 avg_h_reaction_rounded = round(str(avg_h_reaction), sigfigs = 3)
 \end{pycode}
 % \end{noindent}
-
+%
 \begin{align*}
 	\Delta H_{reaction} & = \frac{-201 + -188 + -191 + -57.6 + -198 + -53.1 + -209 + -144}{8} \\
 	\Delta H_{reaction} & = (\py{avg_h_reaction_rounded} \pm 80)\kjpmol
@@ -311,17 +312,11 @@ avg_h_reaction_rounded = round(str(avg_h_reaction), sigfigs = 3)
 
 \subsection*{Comparison with Theoretical Value}
 To find the theoretical value of this reaction, the following formula is used:
-
+%
 \begin{align*}
 	\Delta H_{reaction} = \sum \Delta {H_f}_{products} - \sum \Delta {H_f}_{reactants}
 \end{align*}
-
-% \begin{noindent}
-\begin{pycode}
-expected_h_reaction = -980.14 - (-769.98)
-\end{pycode}
-% \end{noindent}
-
+%
 According to NIST, the molar enthalpy formation of \ce{CuSO4} is -769.98\kjpmol and the molar enthalpy of formation of \ce{ZnSO4} is -980.14\kjpmol . Because \ce{Zn} and \ce{Cu} are in their standard states, the molar enthalpy of \ce{Zn} and \ce{Cu} is 0\kjpmol .
 \begin{align*}
 	\Delta H_{reaction} & = -980.14\kjpmol - (-769.98\kjpmol) \\
@@ -329,13 +324,14 @@ According to NIST, the molar enthalpy formation of \ce{CuSO4} is -769.98\kjpmol 
 \end{align*}
 
 This theoretical value can be used to determine the percent error of the value obtained from the experimental trials:
-
+%
 % \begin{noindent}
 \begin{pycode}
+expected_h_reaction = -980.14 - (-769.98)
 percent_error = abs((avg_h_reaction - expected_h_reaction) / expected_h_reaction)
 \end{pycode}
 % \end{noindent}
-
+%
 \begin{align*}
 	\delta & = |\frac{v_A - v_E}{v_E}| * 100\%                                   \\
 	\delta & = |\frac{\py{avg_h_reaction_rounded} - (-210.16)}{-210.16}| * 100\% \\
@@ -350,6 +346,7 @@ The Tietjen-Moore test calculates a test statistic $L_k$ based on the data. The 
 \end{align*}
 
 where $n$ is the number of data points in our data set, $\bar{y}$ denotes the mean for all trials, and $\bar{y}_k$ denotes the sample mean with the largest $k$ points removed. It is suspected that there are 2 outliers in the experimental results displayed in Table 2. Thus, $k = 2$:
+%
 % \begin{noindent}
 \begin{pycode}
 import numpy as np
@@ -368,13 +365,14 @@ denominator = sum([
 L_2 = numerator / denominator
 \end{pycode}
 % \end{noindent}
+%
 \begin{align*}
 	L_2 & = \frac{\sum_{i=1}^{8-2}(y_i-\bar{y}_2)^2}{\sum_{i=1}^{8}(y_i-\bar{y})^2} \\
 	L_2 & = \py{tsf(L_2)}
 \end{align*}
 
 Because this test statistic is close to zero, it strongly suggests that there are two outliers in the data. Removing these outliers (Trial 3 and Trial 5) from our data and recalculating the $\Delta H_{reaction}$ gives a much smaller percent error:
-
+%
 % \begin{noindent}
 \begin{pycode}
 avg_h_reaction_2 = np.mean(filtered_h_reactions)
@@ -384,7 +382,7 @@ percent_error_2 = abs(
 )
 \end{pycode}
 % \end{noindent}
-
+%
 \begin{align*}
 	\Delta {H_{reaction}}_{2} & = \frac{-201 + -188 + -191 + -198 + -209 + -144}{6}                   \\
 	\Delta {H_{reaction}}_{2} & = (\py{avg_h_reaction_2_rounded} \pm 30)\kjpmol                                \\
