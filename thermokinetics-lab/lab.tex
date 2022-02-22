@@ -7,6 +7,7 @@
 \usepackage[font=small]{caption}
 \usepackage{calculator}
 \usepackage{luacode}
+\usepackage{pythontex}
 
 \DeclareSIUnit\ml{\milli\litre}
 \DeclareSIUnit\mpl{\mol\per\litre}
@@ -32,6 +33,56 @@
 
 \section*{Data}
 
+% \begin{noindent}
+\begin{pycode}
+"""
+[0]: Volume of CuSO4 Time of Zn Addition
+[1]: Initial temp
+[2]: Time of Zn addition
+[3]: b value for equation of cooling line
+[4]: m value for equation of cooling line (could be positive/negative)
+[5]: R value of cooling line
+"""
+
+data = [
+	# Eric, Bobby, Bryan	20	24.4	72	75.358 - 0.0417x	-0.9918
+	[20, 24.4, 72, 75.358, -0.0417, -0.9918],
+	# Estelle, Hannah, Molly 	20	24.2	132	76.057 - 0.0521x	-0.9591
+	[20, 24.2, 132, 76.1, -0.0521, -0.9591],
+	# Lily, Cindy, Devanshi	20	24.2	60	74.909-0.086299x	-0.99338
+	[20, 24.2, 60, 74.9, -0.086299, -0.99338],
+	# Kevin, Leon, Thomas	20	24.8	72	38.948 - 0.0052021x	-0.95144
+	[20, 24.8, 72, 38.948, -0.0052021, -0.95144],
+	# Avaneesh, Artin, Ethan, Yucen	20	24.6	96	75.883 - 2.5313x	-0.99564
+	[20, 24.6, 96, 75.883, -2.5313 / 60, -0.99564], # time of cooling line was given in minutes
+	# Colin, Henry, Collin, Ishan	20	23.1	14	35.707+0.0060035x	0.952365476
+	[20, 23.1, 14, 35.707, 0.0060035, 0.952365476],
+	# Jasmine, Amy, Tina	20	23.8	15	74.526-0.059536x	-0.8973
+	[20, 23.8, 15, 74.526, -0.059536, -0.8973],
+	# Prachi, Michelle, Naina 	20	24.6	96	61.881 - 0.02918	-0.99694
+	[20, 24.6, 96, 61.881, -0.02918, -0.99694],
+]
+
+def get_data_row(row_index: int):
+	# Three sig fig
+	def tsf(num):
+		return '%s' % float('%.3g' % num)
+
+	row = data[row_index]
+	sign = "+" if row[4] > 0 else "-"
+	equation = f"{row[3]:.3g} {sign} {abs(row[4]):.3g}$x$"
+
+	return f"""
+		{row_index}
+		& {row[0]}
+		& {row[1]}
+		& {row[2]}
+		& {equation}
+		& {tsf(row[5])}
+	"""
+\end{pycode}
+% \end{noindent}
+
 \begin{table}[hbt!]
 	\caption{Data collected from 8 trials of the experiment. Equation of cooling line approximates the temperature of the solution in Celsius at $x$ seconds. The parameters are rounded to 3 significant figures.}
 	\def\arraystretch{1.5}
@@ -51,69 +102,21 @@
 		 & Equation of cooling line
 		 & R value
 		\\\hline
-		% Eric, Bobby, Bryan	20	24.4	72	75.358 - 0.0417x	-0.9918
-		1
-		 & 20
-		 & 24.4
-		 & 72
-		 & 75.4 - 0.0417$x$
-		 & -0.992
+		\py{get_data_row(0)}
 		\\\hline
-		% Estelle, Hannah, Molly 	20	24.2	132	76.057 - 0.0521x	-0.9591
-		2
-		 & 20
-		 & 24.2
-		 & 132
-		 & 76.1 - 0.0521$x$
-		 & -0.959
+		\py{get_data_row(1)}
 		\\\hline
-		% Lily, Cindy, Devanshi	20	24.2	60	74.909-0.086299x	-0.99338
-		3
-		 & 20
-		 & 24.2
-		 & 60
-		 & 74.9 - 0.0863$x$
-		 & -0.993
+		\py{get_data_row(2)}
 		\\\hline
-		% Kevin, Leon, Thomas	20	24.8	72	38.948 - 0.0052021x	-0.95144
-		4
-		 & 20
-		 & 24.8
-		 & 72
-		 & 38.9 - 0.00520$x$
-		 & -0.951
+		\py{get_data_row(3)}
 		\\\hline
-		% Avaneesh, Artin, Ethan, Yucen	20	24.6	96	75.883 - 2.5313x	-0.99564
-		5
-		 & 20
-		 & 24.6
-		 & 96
-		 & 75.9 - 0.0422$x$
-		 & -0.996
-		% Colin, Henry, Collin, Ishan	20	23.1	14	35.707+0.0060035x	0.952365476
+		\py{get_data_row(4)}
 		\\\hline
-		6
-		 & 20
-		 & 23.1
-		 & 14
-		 & 35.7 + 0.00600$x$
-		 & 0.952
+		\py{get_data_row(5)}
 		\\\hline
-		% Jasmine, Amy, Tina	20	23.8	15	74.526-0.059536x	-0.8973
-		7
-		 & 20
-		 & 23.8
-		 & 15
-		 & 74.5 - 0.0595$x$
-		 & -0.897
+		\py{get_data_row(6)}
 		\\\hline
-		% Prachi, Michelle, Naina 	20	24.6	96	61.881 - 0.02918	-0.99694
-		8
-		 & 20
-		 & 24.6
-		 & 96
-		 & 61.9 - 0.0292$x$
-		 & -0.997
+		\py{get_data_row(7)}
 		\\\hline
 	\end{tabularx}
 \end{table}
@@ -145,8 +148,8 @@ In addition to the number of moles of \ce{ZnSO4}, the change in energy of the re
 Since the solution is dilute, the mass of the solution can be approximated using the density of water, 1~\unit{\gram\per\cm}. Thus, the mass of the solution is:
 \begin{align*}
 	m & = \rho * V                      \\
-	m & = 1~\unit{\gram\per\cm} * 10\ml \\
-	m & = 10\gram
+	m & = 1~\unit{\gram\per\cm} * 20\ml \\
+	m & = 20\gram
 \end{align*}
 
 The heat capacity of the solution is approximated with the specific heat capacity of water (4.184\heatcap). Thus, $c = 4.184\heatcap$
@@ -169,27 +172,63 @@ With these values, the energy change of the solution and the energy change of th
 \begin{align*}
 	Q_{solution} & = mc\Delta T = mc(T_f - T_i)
 	\\
-	Q_{solution} & = (10\gram) * (4.184\heatcap) * (38.5734\celsius - 24.8\celsius)
+	Q_{solution} & = (20\gram) * (4.184\heatcap) * (38.5734\celsius - 24.8\celsius)
 	\\
-	Q_{solution} & = 576.28\joule
+	Q_{solution} & = 1152.56\joule
 	\\
 	Q_{reaction} & = -Q_{solution}
 	\\
-	Q_{reaction} & = -576.28\joule
+	Q_{reaction} & = -1152.56\joule
 \end{align*}
 
 Finally, the molar enthalpy of the reaction can be calculated:
 \begin{align*}
 	\Delta H_{reaction} & = \frac{Q_{reaction}}{n}                        \\
-	\Delta H_{reaction} & = \frac{-576.28\joule}{0.02\mol}                \\
-	\Delta H_{reaction} & = -28814~\unit{\joule\per\mol} = -28.814\kjpmol
+	\Delta H_{reaction} & = \frac{-1152.56\joule}{0.02\mol}               \\
+	\Delta H_{reaction} & = -57628~\unit{\joule\per\mol} = -57.628\kjpmol
 \end{align*}
 
 Performing the above calculation for all trials gives the following table of values:
 
+% \begin{noindent}
 \begin{luacode*}
-function hreaction(t_initial, t_final)
-	m = 10
+	--[[
+			[1] = Volume of CuSO4 Time of Zn Addition
+			[2] = Initial temp
+			[3] = Time of Zn addition
+			[4] = b value for equation of cooling line
+			[5] = m value for equation of cooling line (could be positive/negative)
+		]]
+	data = {
+		-- Eric, Bobby, Bryan	20	24.4	72	75.358 - 0.0417x	-0.9918
+		{20, 24.4, 72, 75.358, -0.0417},
+		-- Estelle, Hannah, Molly 	20	24.2	132	76.057 - 0.0521x	-0.9591
+		{20, 24.2, 132, 76.1, -0.0521},
+		-- Lily, Cindy, Devanshi	20	24.2	60	74.909-0.086299x	-0.99338
+		{20, 24.2, 60, 74.9, -0.086299},
+		-- Kevin, Leon, Thomas	20	24.8	72	38.948 - 0.0052021x	-0.95144
+		{20, 24.8, 72, 38.948, -0.0052021},
+		-- Avaneesh, Artin, Ethan, Yucen	20	24.6	96	75.883 - 2.5313x	-0.99564
+		{20, 24.6, 96, 75.883, -2.5313},
+		-- Colin, Henry, Collin, Ishan	20	23.1	14	35.707+0.0060035x	0.952365476
+		{20, 23.1, 14, 35.707, 0.0060035},
+		-- Jasmine, Amy, Tina	20	23.8	15	74.526-0.059536x	-0.8973
+		{20, 23.8, 15, 74.526, -0.059536},
+		-- Prachi, Michelle, Naina 	20	24.6	96	61.881 - 0.02918	-0.99694
+		{20, 24.6, 96, 61.881, -0.02918},
+	}
+
+	function qreaction(t_initial, t_final)
+	m = 20
+	c = 4.184
+
+	q = m * c * (t_final - t_initial)
+
+	tex.sprint(("%.4g"):format(-q))
+	end
+
+	function hreaction(t_initial, t_final)
+	m = 20
 	c = 4.184
 
 	q = m * c * (t_final - t_initial)
@@ -199,8 +238,9 @@ function hreaction(t_initial, t_final)
 
 	-- Three significant figures
 	tex.sprint(("%.3g"):format(h))
-end
+	end
 \end{luacode*}
+% \end{noindent}
 
 \newcounter{hreactionrownumber}
 \setcounter{hreactionrownumber}{0}
@@ -213,15 +253,26 @@ end
 	\addtocounter{hreactionrownumber}{1}
 	\thehreactionrownumber
 	&
+	\luaexec{tex.sprint(("\%.3g"):format(#3 #4 #5 * #2))}
+	&
+	\directlua{qreaction(#1, #3 #4 #5 * #2)}
+	&
 	\directlua{hreaction(#1, #3 #4 #5 * #2)}
 }
 
 \begin{table}[hbt!]
 	\caption{Calculations of $\Delta H_{reaction}$ for all trials.}
 	\def\arraystretch{1.5}
-	\begin{tabularx}{\linewidth}{|X|X|X|X|}
+	\begin{tabularx}{\linewidth}{|
+			p{0.1\linewidth}|
+			p{0.3\linewidth}|
+			>{\RaggedRight}X|
+			>{\RaggedRight}X|
+		}
 		\hline
 		Trial \#
+		 & Final Temperature $T_f$ /\unit{\celsius}
+		 & $Q_{reaction}$ /\unit{\joule\per\mol}
 		 & $\Delta H_{reaction}$ /\unit{\kjpmol}
 		\\\hline
 		% Eric, Bobby, Bryan	20	24.4	72	75.358 - 0.0417x	-0.9918
@@ -250,6 +301,13 @@ end
 		\\\hline
 	\end{tabularx}
 \end{table}
+
+Thus, the experimental value for $\Delta H_{reaction}$ can be determined by taking the average of the values from all 8 trials. The uncertainty can be calculated using the half-range method:
+
+\begin{align*}
+	\Delta H_{reaction} & = \frac{-201 + -188 + -191 + -57.6 + -198 + -52.4 + -209 + -144}{8}
+	\Delta H_{reaction} & =
+\end{align*}
 
 \subsection*{Comparison with Theoretical Value}
 To find the theoretical value of this reaction, the following formula is used:
