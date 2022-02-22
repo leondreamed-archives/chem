@@ -1,14 +1,15 @@
-\documentclass[demo, 12pt, notitlepage, letterpaper]{report}
+\documentclass[12pt, notitlepage, letterpaper]{report}
 \usepackage[version=4]{mhchem}
 \usepackage{siunitx}
 \usepackage[margin=1in]{geometry}
 \usepackage{tabularx}
 \usepackage{ragged2e}
-\usepackage[font=small]{caption}
+\usepackage[font=small, skip=3pt]{caption}
 \usepackage{calculator}
 \usepackage{luacode}
 \usepackage{pythontex}
 \usepackage{float}
+\usepackage{graphicx}
 
 \DeclareSIUnit\ml{\milli\litre}
 \DeclareSIUnit\mpl{\mol\per\litre}
@@ -18,6 +19,7 @@
 \DeclareSIUnit\heatcap{\joule\per\celsius\per\gram}
 
 \sisetup{space-before-unit = true, free-standing-units = true}
+\graphicspath{{assets/}}
 
 \title{Thermokinetics Lab}
 \author{Leon Si}
@@ -196,7 +198,10 @@ To obtain the final temperature of the solution, the cooling of the solution nee
 
 This value represents the point $x$ in the following graph:
 
-\centerline{\noindent\includegraphics{time-vs-temperature.png}}
+\begin{figure}[h!]
+	\caption{A graph of temperature (\unit{\celsius}) against time (\unit{\second}) of the reaction between \ce{CuSO4} and \ce{Zn}. The orange line represents the line of best fit of the cooling line, the red line indicates the time when zinc was added, and the red circle indicates the final temperature of the solution with cooling taken into account.}
+	\centerline{\noindent\includegraphics[width=0.8\textwidth]{time-vs-temperature.png}}
+\end{figure}
 
 With these values, the energy change of the solution and the energy change of the reaction can be determined:
 \begin{align*}
@@ -395,6 +400,6 @@ The experimental value of the molar enthalpy of reaction between \ce{CuSO4} and 
 
 This discrepancy can be explained by the assumptions made in our calculations. We assumed that all the heat from the reaction is being transferred to the solution through our equation $Q_{reaction} = -Q_{solution}$. However, during this experiment, some of this heat was also transferred to the container: the styrofoam cup, and our calculations did not take into account the heat capacity of the container. As a result, the energy gained by the solution is less than the energy released by the reaction, leading to a molar enthalpy calculation that is lower than the theoretical molar enthalpy.
 
-Another potential source of error is the . 
+Another potential source of error is the .
 
 \end{document}
