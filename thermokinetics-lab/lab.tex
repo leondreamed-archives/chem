@@ -6,10 +6,10 @@
 \usepackage{ragged2e}
 \usepackage[font=small, skip=3pt]{caption}
 \usepackage{calculator}
-\usepackage{luacode}
-\usepackage{pythontex}
 \usepackage{float}
 \usepackage{graphicx}
+
+<? const { default: _ } = await import('lodash'); ?>
 
 \DeclareSIUnit\ml{\milli\litre}
 \DeclareSIUnit\mpl{\mol\per\litre}
@@ -28,6 +28,10 @@
 \begin{document}
 \maketitle
 
+<?
+const tsf = (num) => String(Number(num.toPrecision(3)))
+?>
+
 % Rubric:
 
 % Sufficient relevant quantitative and qualitative raw data supports a detailed and valid research question conclusion.
@@ -42,74 +46,55 @@
 
 \section*{Data}
 
-% Declare rounding function to three significant figures
-% \begin{noindent}
-\begin{pycode}
-from sigfig import round
-# Three sig fig
-def tsf(num):
-	return round(str(num), sigfigs = 3)
-\end{pycode}
-% \end{noindent}
-
 % Declare data
 % \begin{noindent}
-\begin{pycode}
-"""
+<?
+/*
 [0]: Volume of CuSO4 Time of Zn Addition
 [1]: Initial temp
 [2]: Time of Zn addition
 [3]: b value for equation of cooling line
 [4]: m value for equation of cooling line (could be positive/negative)
 [5]: R value of cooling line
-"""
+*/
 
-raw_data = [
-	# Eric, Bobby, Bryan	20	24.4	72	75.358 - 0.0417x	-0.9918
+const rawData = [
+	// Eric, Bobby, Bryan	20	24.4	72	75.358 - 0.0417x	-0.9918
 	[20, 24.4, 72, 75.358, -0.0417, -0.9918],
-	# Estelle, Hannah, Molly 	20	24.2	132	76.057 - 0.0521x	-0.9591
+	// Estelle, Hannah, Molly 	20	24.2	132	76.057 - 0.0521x	-0.9591
 	[20, 24.2, 132, 76.1, -0.0521, -0.9591],
-	# Lily, Cindy, Devanshi	20	24.2	60	74.909-0.086299x	-0.99338
+	// Lily, Cindy, Devanshi	20	24.2	60	74.909-0.086299x	-0.99338
 	[20, 24.2, 60, 74.9, -0.086299, -0.99338],
-	# Kevin, Leon, Thomas	20	24.8	72	38.948 - 0.0052021x	-0.95144
+	// Kevin, Leon, Thomas	20	24.8	72	38.948 - 0.0052021x	-0.95144
 	[20, 24.8, 72, 38.948, -0.0052021, -0.95144],
-	# Avaneesh, Artin, Ethan, Yucen	20	24.6	96	75.883 - 2.5313x	-0.99564
-	[20, 24.6, 96, 75.883, -2.5313 / 60, -0.99564], # time of cooling line was given in minutes
-	# Colin, Henry, Collin, Ishan	20	23.1	14	35.707+0.0060035x	0.952365476
+	// Avaneesh, Artin, Ethan, Yucen	20	24.6	96	75.883 - 2.5313x	-0.99564
+	[20, 24.6, 96, 75.883, -2.5313 / 60, -0.99564], // time of cooling line was given in minutes
+	// Colin, Henry, Collin, Ishan	20	23.1	14	35.707+0.0060035x	0.952365476
 	[20, 23.1, 14, 35.707, +0.0060035, 0.952365476],
-	# Jasmine, Amy, Tina	20	23.8	15	74.526-0.059536x	-0.8973
+	// Jasmine, Amy, Tina	20	23.8	15	74.526-0.059536x	-0.8973
 	[20, 23.8, 15, 74.526, -0.059536, -0.8973],
-	# Prachi, Michelle, Naina 	20	24.6	96	61.881 - 0.02918	-0.99694
+	// Prachi, Michelle, Naina 	20	24.6	96	61.881 - 0.02918	-0.99694
 	[20, 24.6, 96, 61.881, -0.02918, -0.99694],
-]
+];
 
-headers = (
-	'volume',
-	'initial_temp',
-	'zinc_addition_time',
-	'cooling_line_b',
-	'cooling_line_m',
-	'r_value'
-)
+const data = rawData.map(
+	([volume, initialTemp, zincAdditionTime, coolingLineB, coolingLineM, rValue]) => ({
+		volume,
+		initialTemp,
+		zincAdditionTime,
+		coolingLineB,
+		coolingLineM,
+		rValue
+	})
+);
 
-data = [
-	dict(zip(headers, row)) for row in raw_data
-]
-
-def get_data_row(row_index: int):
-	row = data[row_index]
-	sign = "+" if row['cooling_line_m'] > 0 else "-"
-	equation = f"{tsf(row['cooling_line_b'])} {sign} {tsf(abs(row['cooling_line_m']))}$x$"
-
-	return f"""
-		{row_index + 1}
-		& {row['volume']}
-		& {row['initial_temp']}
-		& {row['zinc_addition_time']}
-		& {equation}
-		& {tsf(row['r_value'])}
-	"""
-\end{pycode}
+function getRowEquation(rowIndex) {
+	const row = data[rowIndex];
+	const sign = row.coolingLineM > 0 ? '+' : '-';
+	const equation = `${tsf(row.coolingLineM)} ${sign} ${tsf(Math.abs(row.coolingLineM))}$x$`;
+	return equation;
+}
+?>
 % \end{noindent}
 
 \begin{table}[hbt!]
@@ -131,22 +116,17 @@ def get_data_row(row_index: int):
 		 & Equation of cooling line
 		 & R value
 		\\\hline
-		\py{get_data_row(0)}
-		\\\hline
-		\py{get_data_row(1)}
-		\\\hline
-		\py{get_data_row(2)}
-		\\\hline
-		\py{get_data_row(3)}
-		\\\hline
-		\py{get_data_row(4)}
-		\\\hline
-		\py{get_data_row(5)}
-		\\\hline
-		\py{get_data_row(6)}
-		\\\hline
-		\py{get_data_row(7)}
-		\\\hline
+		% \begin{noindent}
+		<? for (const [rowIndex, row] of data.entries()) { ?>
+			<?= rowIndex + 1 ?>
+			& <?= row.volume ?>
+			& <?= row.initialTemp ?>
+			& <?= row.zincAdditionTime ?>
+			& <?= getRowEquation(rowIndex) ?>
+			& <?= tsf(row.rValue) ?>
+			\\\hline
+		<? } ?>
+		% \end{noindent}
 	\end{tabularx}
 \end{table}
 
@@ -229,37 +209,30 @@ Using the moles of \ce{ZnSO4} and the change in energy of the reaction ($Q_{reac
 Performing the above calculation for all trials in Table 1 yields the following table of values:
 
 % \begin{noindent}
-\begin{pycode}
-def get_final_temp(row_index: int):
-	row = data[row_index]
-	t_final = row['cooling_line_b'] + row['zinc_addition_time'] * row['cooling_line_m']
-	return t_final
+<?
+function getFinalTemp(rowIndex) {
+	const row = data[rowIndex];
+	const tFinal = row.coolingLineM * row.zincAdditionTime + row.coolingLineB;
+	return tFinal;
+}
 
-def get_q_reaction(row_index: int):
-	row = data[row_index]
-	m = row['volume']
-	c = 4.184
-	t_initial = row['initial_temp']
-	t_final = get_final_temp(row_index)
-	q = -1 * m * c * (t_final - t_initial)
-	return q
+function getQReaction(rowIndex) {
+	const row = data[rowIndex];
+	const m = row.volume;
+	const c = 4.184;
+	const tInitial = row.initialTemp;
+	const tFinal = getFinalTemp(rowIndex);
+	const q = -1 * m * c * (tFinal - tInitial);
+	return q;
+}
 
-def get_h_reaction(row_index: int):
-	q = get_q_reaction(row_index)
-	mols = 0.02
-	h = q / mols / 1000 # kJ/mol
-	return h
-
-def get_table_2_row(row_index: int):
-	row = data[row_index]
-	return f"""
-		{row_index + 1}
-		& {tsf(get_final_temp(row_index))}
-		& {tsf(get_q_reaction(row_index))}
-		& {tsf(get_h_reaction(row_index))}
-	"""
-\end{pycode}
-% \end{noindent}
+function getHReaction(rowIndex) {
+	const q = getQReaction(rowIndex);
+	const mols = 0.02;
+	const h = q / mols / 1000; // kJ/mol
+	return h;
+}
+?>
 
 \begin{table}[H]
 	\caption{Calculations of $\Delta H_{reaction}$ for all trials.}
@@ -276,38 +249,30 @@ def get_table_2_row(row_index: int):
 		 & $Q_{reaction}$ /\unit{\joule}
 		 & $\Delta H_{reaction}$ /\unit{\kjpmol}
 		\\\hline
-		\py{get_table_2_row(0)}
-		\\\hline
-		\py{get_table_2_row(1)}
-		\\\hline
-		\py{get_table_2_row(2)}
-		\\\hline
-		\py{get_table_2_row(3)}
-		\\\hline
-		\py{get_table_2_row(4)}
-		\\\hline
-		\py{get_table_2_row(5)}
-		\\\hline
-		\py{get_table_2_row(6)}
-		\\\hline
-		\py{get_table_2_row(7)}
-		\\\hline
-	\end{tabularx}
+		% \begin{noindent}
+		<? for (const [rowIndex, row] of data.entries()) { ?>
+			<?= rowIndex + 1 ?>
+			& <?= tsf(getFinalTemp(rowIndex)) ?>
+			& <?= tsf(getQReaction(rowIndex)) ?>
+			& <?= tsf(getHReaction(rowIndex)) ?>
+			\\\hline
+		<? } ?>
+		% \end{noindent}
+\end{tabularx}
 \end{table}
 
 The experimental value for $\Delta H_{reaction}$ can be determined by taking the average of the values from all 8 trials. The uncertainty can be calculated using the half-range method:
 \vspace{5pt}
-% \begin{noindent}
-\begin{pycode}
-h_reactions = [get_h_reaction(row_index) for row_index in range(0, len(data))]
-avg_h_reaction = sum(h_reactions) / len(data)
-avg_h_reaction_rounded = round(str(avg_h_reaction), sigfigs = 3)
-\end{pycode}
-% \end{noindent}
+
+<?
+const hReactions = Array.from({ length: data.length }).map((_, i) => getHReaction(i));
+const avgHReaction = _.mean(hReactions);
+const avgHReactionRounded = tsf(avgHReaction);
+?>
 %
 \begin{align*}
 	\Delta H_{reaction} & = \frac{-201 + -188 + -191 + -57.6 + -198 + -53.1 + -209 + -144}{8} \\
-	\Delta H_{reaction} & = (\py{avg_h_reaction_rounded} \pm 80)\kjpmol
+	\Delta H_{reaction} & = (<?= avgHReactionRounded ?> \pm 80)\kjpmol
 \end{align*}
 
 \subsection*{Comparison with Theoretical Value}
@@ -325,17 +290,15 @@ According to NIST, the molar enthalpy formation of \ce{CuSO4} is -769.98\kjpmol 
 
 This theoretical value can be used to determine the percent error of the value obtained from the experimental trials:
 %
-% \begin{noindent}
-\begin{pycode}
-expected_h_reaction = -980.14 - (-769.98)
-percent_error = abs((avg_h_reaction - expected_h_reaction) / expected_h_reaction)
-\end{pycode}
-% \end{noindent}
+<?
+const expectedHReaction = -980.14 - (-769.98);
+const percentError = Math.abs((avgHReaction - expectedHReaction) / expectedHReaction);
+?>
 %
 \begin{align*}
-	\delta & = |\frac{v_A - v_E}{v_E}| * 100\%                                   \\
-	\delta & = |\frac{\py{avg_h_reaction_rounded} - (-210.16)}{-210.16}| * 100\% \\
-	\delta & = \py{round(percent_error * 100, sigfigs = 3)}\%
+	\delta & = |\frac{v_A - v_E}{v_E}| * 100\%                                  \\
+	\delta & = |\frac{<?= avgHReactionRounded ?> - (-210.16)}{-210.16}| * 100\% \\
+	\delta & = <?= tsf(percentError * 100) ?>\%
 \end{align*}
 
 However, from the experimental data, there are potentially two outliers: Trial 3 and Trial 5. Because there is potentially more than one outlier, the Dixon Q test cannot be used since it is only valid for data that has exactly one outlier. To determine these outliers in our data, the Tietjen-Moore test is used instead.
@@ -347,47 +310,34 @@ The Tietjen-Moore test calculates a test statistic $L_k$ based on the data. The 
 
 where $n$ is the number of data points in our data set, $\bar{y}$ denotes the mean for all trials, and $\bar{y}_k$ denotes the sample mean with the largest $k$ points removed. It is suspected that there are 2 outliers in the experimental results displayed in Table 2. Thus, $k = 2$:
 %
-% \begin{noindent}
-\begin{pycode}
-import numpy as np
-# Retrieving the data with the two largest values removed
-filtered_h_reactions = sorted(h_reactions)[:-2]
-full_mean = np.mean(h_reactions)
-filtered_mean = np.mean(filtered_h_reactions)
-
-numerator = sum([
-	(y - filtered_mean) ** 2 for y in filtered_h_reactions
-])
-denominator = sum([
-	(y - full_mean) ** 2 for y in h_reactions
-])
-
-L_2 = numerator / denominator
-\end{pycode}
-% \end{noindent}
+<?
+// Retrieving the data with the two largest values removed
+const filteredHReactions = hReactions.sort((a, b) => a - b).slice(0, -2);
+const fullMean = _.mean(hReactions);
+const filteredMean = _.mean(filteredHReactions);
+const numerator = _.sum(filteredHReactions.map(y => (y - filteredMean) ** 2));
+const denominator = _.sum(hReactions.map(y => (y - fullMean) ** 2));
+const L_2 = numerator / denominator;
+?>
 %
 \begin{align*}
 	L_2 & = \frac{\sum_{i=1}^{8-2}(y_i-\bar{y}_2)^2}{\sum_{i=1}^{8}(y_i-\bar{y})^2} \\
-	L_2 & = \py{tsf(L_2)}
+	L_2 & = <?= tsf(L_2) ?>
 \end{align*}
 
 Because this test statistic is close to zero, it strongly suggests that there are two outliers in the data. Removing these outliers (Trial 3 and Trial 5) from our data and recalculating the $\Delta H_{reaction}$ gives a much smaller percent error:
 %
-% \begin{noindent}
-\begin{pycode}
-avg_h_reaction_2 = np.mean(filtered_h_reactions)
-avg_h_reaction_2_rounded = round(str(avg_h_reaction_2), sigfigs = 3)
-percent_error_2 = abs(
-	(avg_h_reaction_2 - expected_h_reaction) / expected_h_reaction
-)
-\end{pycode}
-% \end{noindent}
+<?
+const avgHReaction2 = _.mean(filteredHReactions);
+const avgHReaction2Rounded = tsf(avgHReaction2);
+const percentError2 = Math.abs((avgHReaction2 - expectedHReaction) / expectedHReaction);
+?>
 %
 \begin{align*}
-	\Delta {H_{reaction}}_{2} & = \frac{-201 + -188 + -191 + -198 + -209 + -144}{6}                   \\
-	\Delta {H_{reaction}}_{2} & = (\py{avg_h_reaction_2_rounded} \pm 30)\kjpmol                                \\
-	\delta                    & = |\frac{\py{avg_h_reaction_2_rounded} - (-210.16)}{-210.16}| * 100\% \\
-	\delta                    & = \py{round(percent_error_2 * 100, sigfigs = 3)}\%
+	\Delta {H_{reaction}}_{2} & = \frac{-201 + -188 + -191 + -198 + -209 + -144}{6}                 \\
+	\Delta {H_{reaction}}_{2} & = (<?= avgHReaction2Rounded ?> \pm 30)\kjpmol                       \\
+	\delta                    & = |\frac{<?= avgHReaction2Rounded ?> - (-210.16)}{-210.16}| * 100\% \\
+	\delta                    & = <?= tsf(percentError2 * 100) ?>\%
 \end{align*}
 
 \section*{Conclusion}
