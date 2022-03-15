@@ -9,8 +9,6 @@
 \usepackage{float}
 \usepackage{graphicx}
 
-<? const { default: _ } = await import('lodash'); ?>
-
 \DeclareSIUnit\ml{\milli\litre}
 \DeclareSIUnit\mpl{\mol\per\litre}
 \DeclareSIUnit\mmol{\milli\mole}
@@ -75,18 +73,12 @@ const rawData = [
 	[20, 23.8, 15, 74.526, -0.059536, -0.8973],
 	// Prachi, Michelle, Naina 	20	24.6	96	61.881 - 0.02918	-0.99694
 	[20, 24.6, 96, 61.881, -0.02918, -0.99694],
-];
+]
 
-const data = rawData.map(
-	([volume, initialTemp, zincAdditionTime, coolingLineB, coolingLineM, rValue]) => ({
-		volume,
-		initialTemp,
-		zincAdditionTime,
-		coolingLineB,
-		coolingLineM,
-		rValue
-	})
-);
+const keys = ['volume', 'initialTemp', 'zincAdditionTime', 'coolingLineB', 'coolingLineM', 'rValue'];
+
+// The Ramda library (https://ramdajs.com/) is present in the global scope as `R`!
+const data = rawData.map((row) => Object.fromEntries(R.zip(keys, row)));
 
 function getRowEquation(rowIndex) {
 	const row = data[rowIndex];
@@ -97,7 +89,7 @@ function getRowEquation(rowIndex) {
 ?>
 % \end{noindent}
 
-\begin{table}[hbt!]
+\begin{table}[H]
 	\caption{Data collected from 8 trials of measuring the heat released from the reaction between \ce{CuSO4} and \ce{Zn}. The equation of the cooling line approximates the temperature of the solution in degrees Celsius at $x$ seconds, and the parameters are rounded to 3 significant figures.}
 	\def\arraystretch{1.5}
 	\begin{tabularx}{\linewidth}{|
@@ -266,7 +258,7 @@ The experimental value for $\Delta H_{reaction}$ can be determined by taking the
 
 <?
 const hReactions = Array.from({ length: data.length }).map((_, i) => getHReaction(i));
-const avgHReaction = _.mean(hReactions);
+const avgHReaction = R.mean(hReactions);
 const avgHReactionRounded = tsf(avgHReaction);
 ?>
 %
@@ -313,10 +305,10 @@ where $n$ is the number of data points in our data set, $\bar{y}$ denotes the me
 <?
 // Retrieving the data with the two largest values removed
 const filteredHReactions = hReactions.sort((a, b) => a - b).slice(0, -2);
-const fullMean = _.mean(hReactions);
-const filteredMean = _.mean(filteredHReactions);
-const numerator = _.sum(filteredHReactions.map(y => (y - filteredMean) ** 2));
-const denominator = _.sum(hReactions.map(y => (y - fullMean) ** 2));
+const fullMean = R.mean(hReactions);
+const filteredMean = R.mean(filteredHReactions);
+const numerator = R.sum(filteredHReactions.map(y => (y - filteredMean) ** 2));
+const denominator = R.sum(hReactions.map(y => (y - fullMean) ** 2));
 const L_2 = numerator / denominator;
 ?>
 %
@@ -328,7 +320,7 @@ const L_2 = numerator / denominator;
 Because this test statistic is close to zero, it strongly suggests that there are two outliers in the data. Removing these outliers (Trial 3 and Trial 5) from our data and recalculating the $\Delta H_{reaction}$ gives a much smaller percent error:
 %
 <?
-const avgHReaction2 = _.mean(filteredHReactions);
+const avgHReaction2 = R.mean(filteredHReactions);
 const avgHReaction2Rounded = tsf(avgHReaction2);
 const percentError2 = Math.abs((avgHReaction2 - expectedHReaction) / expectedHReaction);
 ?>
