@@ -26,10 +26,6 @@
 \begin{document}
 \maketitle
 
-<?
-const tsf = (num) => String(Number(num.toPrecision(3)))
-?>
-
 % Rubric:
 
 % Sufficient relevant quantitative and qualitative raw data supports a detailed and valid research question conclusion.
@@ -83,7 +79,7 @@ const data = rawData.map((row) => Object.fromEntries(R.zip(keys, row)));
 function getRowEquation(rowIndex) {
 	const row = data[rowIndex];
 	const sign = row.coolingLineM > 0 ? '+' : '-';
-	const equation = `${tsf(row.coolingLineM)} ${sign} ${tsf(Math.abs(row.coolingLineM))}$x$`;
+	const equation = `${sigfig(row.coolingLineM, 3)} ${sign} ${sigfig(Math.abs(row.coolingLineM), 3)}$x$`;
 	return equation;
 }
 ?>
@@ -115,7 +111,7 @@ function getRowEquation(rowIndex) {
 			& <?= row.initialTemp ?>
 			& <?= row.zincAdditionTime ?>
 			& <?= getRowEquation(rowIndex) ?>
-			& <?= tsf(row.rValue) ?>
+			& <?= sigfig(row.rValue, 3) ?>
 			\\\hline
 		<? } ?>
 		% \end{noindent}
@@ -244,9 +240,9 @@ function getHReaction(rowIndex) {
 		% \begin{noindent}
 		<? for (const [rowIndex, row] of data.entries()) { ?>
 			<?= rowIndex + 1 ?>
-			& <?= tsf(getFinalTemp(rowIndex)) ?>
-			& <?= tsf(getQReaction(rowIndex)) ?>
-			& <?= tsf(getHReaction(rowIndex)) ?>
+			& <?= sigfig(getFinalTemp(rowIndex), 3) ?>
+			& <?= sigfig(getQReaction(rowIndex), 3) ?>
+			& <?= sigfig(getHReaction(rowIndex), 3) ?>
 			\\\hline
 		<? } ?>
 		% \end{noindent}
@@ -259,7 +255,7 @@ The experimental value for $\Delta H_{reaction}$ can be determined by taking the
 <?
 const hReactions = Array.from({ length: data.length }).map((_, i) => getHReaction(i));
 const avgHReaction = R.mean(hReactions);
-const avgHReactionRounded = tsf(avgHReaction);
+const avgHReactionRounded = sigfig(avgHReaction, 3);
 ?>
 %
 \begin{align*}
@@ -290,7 +286,7 @@ const percentError = Math.abs((avgHReaction - expectedHReaction) / expectedHReac
 \begin{align*}
 	\delta & = |\frac{v_A - v_E}{v_E}| * 100\%                                  \\
 	\delta & = |\frac{<?= avgHReactionRounded ?> - (-210.16)}{-210.16}| * 100\% \\
-	\delta & = <?= tsf(percentError * 100) ?>\%
+	\delta & = <?= sigfig(percentError * 100, 3) ?>\%
 \end{align*}
 
 However, from the experimental data, there are potentially two outliers: Trial 3 and Trial 5. Because there is potentially more than one outlier, the Dixon Q test cannot be used since it is only valid for data that has exactly one outlier. To determine these outliers in our data, the Tietjen-Moore test is used instead.
@@ -314,14 +310,14 @@ const L_2 = numerator / denominator;
 %
 \begin{align*}
 	L_2 & = \frac{\sum_{i=1}^{8-2}(y_i-\bar{y}_2)^2}{\sum_{i=1}^{8}(y_i-\bar{y})^2} \\
-	L_2 & = <?= tsf(L_2) ?>
+	L_2 & = <?= sigfig(L_2, 3) ?>
 \end{align*}
 
 Because this test statistic is close to zero, it strongly suggests that there are two outliers in the data. Removing these outliers (Trial 3 and Trial 5) from our data and recalculating the $\Delta H_{reaction}$ gives a much smaller percent error:
 %
 <?
 const avgHReaction2 = R.mean(filteredHReactions);
-const avgHReaction2Rounded = tsf(avgHReaction2);
+const avgHReaction2Rounded = sigfig(avgHReaction2, 3);
 const percentError2 = Math.abs((avgHReaction2 - expectedHReaction) / expectedHReaction);
 ?>
 %
@@ -329,7 +325,7 @@ const percentError2 = Math.abs((avgHReaction2 - expectedHReaction) / expectedHRe
 	\Delta {H_{reaction}}_{2} & = \frac{-201 + -188 + -191 + -198 + -209 + -144}{6}                 \\
 	\Delta {H_{reaction}}_{2} & = (<?= avgHReaction2Rounded ?> \pm 30)\kjpmol                       \\
 	\delta                    & = |\frac{<?= avgHReaction2Rounded ?> - (-210.16)}{-210.16}| * 100\% \\
-	\delta                    & = <?= tsf(percentError2 * 100) ?>\%
+	\delta                    & = <?= sigfig(percentError2 * 100, 3) ?>\%
 \end{align*}
 
 \section*{Conclusion}
