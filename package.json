@@ -19,5 +19,8 @@
   "homepage": "https://github.com/leonzalion/chem#readme",
   "dependencies": {
     "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "lionconfig": "^1.6.2"
   }
 }
