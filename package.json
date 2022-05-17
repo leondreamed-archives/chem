@@ -1,26 +1,24 @@
 {
-  "name": "chem",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/leonzalion/chem.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/leonzalion/chem/issues"
-  },
-  "homepage": "https://github.com/leonzalion/chem#readme",
-  "dependencies": {
-    "lodash": "^4.17.21"
-  },
-  "devDependencies": {
-    "lionconfig": "^1.6.2"
-  }
+	"name": "chem",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/leonzalion/chem.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/leonzalion/chem/issues"
+	},
+	"homepage": "https://github.com/leonzalion/chem#readme",
+	"dependencies": {
+		"lodash": "^4.17.21"
+	},
+	"devDependencies": {}
 }
